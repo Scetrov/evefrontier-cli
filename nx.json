@@ -1,0 +1,7 @@
+{
+  "npmScope": "evefrontier",
+  "tasksRunnerOptions": {},
+  "affected": {
+    "defaultBase": "main"
+  }
+}

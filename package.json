@@ -1,0 +1,23 @@
+{
+  "name": "evefrontier-pathfinder",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.0",
+    "markdownlint-cli": "^0.33.0",
+    "prettier": "^2.8.0",
+    "nx": "^16.0.0"
+  },
+  "scripts": {
+    "format": "prettier --write '**/*.{md,rs,json,toml,mdx}'",
+    "lint:md": "markdownlint --config .markdownlint.json --fix 'instructions/**/*.md'",
+    "prepare": "husky install",
+    "postinstall": "husky install"
+  },
+  "lint-staged": {
+    "**/*.{md,rs,json,toml}": [
+      "prettier --write"
+    ]
+  }
+}

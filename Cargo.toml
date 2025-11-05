@@ -1,0 +1,2 @@
+[workspace]
+members = ["crates/evefrontier-lib", "crates/evefrontier-cli"]
