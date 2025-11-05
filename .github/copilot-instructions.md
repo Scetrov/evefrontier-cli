@@ -30,7 +30,6 @@ testing, call `ensure_c3e6_dataset(Some(path))` to control where the DB is place
 ## Important code patterns and conventions
 
 - Data & schema detection
-
   - `crates/evefrontier-lib/src/github.rs` downloads releases from GitHub and caches assets.
   - The code accepts both `.db` files and zipped releases containing `.db` files. The library
     extracts the first `*.db` or a file containing `c3e6` in its name.
@@ -40,7 +39,6 @@ testing, call `ensure_c3e6_dataset(Some(path))` to control where the DB is place
     schema-detection code here and keep queries isolated.
 
 - CLI & configuration
-
   - `crates/evefrontier-cli/src/main.rs` resolves the data path using (in order): CLI `--data-dir`,
     `EVEFRONTIER_DATA_DIR` env var, XDG `directories::ProjectDirs`, fallback to
     `~/.local/evefrontier/static_data.db`.

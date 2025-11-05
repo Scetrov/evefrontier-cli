@@ -28,6 +28,9 @@ const run = (args) => {
     process.exit(res.status || 1);
   }
 };
+// Run outdated checks across all projects (cargo audit for crates, pnpm outdated at root)
+run(['run-many', '--target=outdated', '--all']);
 
+// Then run affected format and lint as before
 run(['affected', '--target=format', '--base=main', '--head=HEAD']);
 run(['affected', '--target=lint', '--base=main', '--head=HEAD']);

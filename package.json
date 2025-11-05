@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "husky": "^8.0.0",
-    "lint-staged": "^13.0.0",
-    "markdownlint-cli": "^0.33.0",
-    "prettier": "^2.8.0",
-    "nx": "22.0.2"
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "markdownlint-cli": "^0.45.0",
+    "nx": "22.0.2",
+    "prettier": "^3.6.2"
   },
   "scripts": {
     "format": "prettier --write \"**/*.{md,rs,json,toml,mdx}\"",
