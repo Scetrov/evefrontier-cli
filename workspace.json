@@ -1,4 +1,84 @@
 {
   "version": 1,
-  "projects": {}
+  "projects": {
+    "evefrontier-cli": {
+      "root": "crates/evefrontier-cli",
+      "sourceRoot": "crates/evefrontier-cli/src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo build --package evefrontier-cli",
+            "cwd": "{workspaceRoot}/crates/evefrontier-cli",
+            "parallel": false,
+            "forwardAllArgs": false
+          }
+        },
+        "test": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo test --package evefrontier-cli",
+            "cwd": "{workspaceRoot}/crates/evefrontier-cli",
+            "forwardAllArgs": false
+          }
+        },
+        "lint": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo clippy --all-targets --workspace -- -D warnings",
+            "cwd": "{workspaceRoot}",
+            "forwardAllArgs": false
+          }
+        },
+        "format": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo fmt --all",
+            "cwd": "{workspaceRoot}",
+            "forwardAllArgs": false
+          }
+        }
+      }
+    },
+    "evefrontier-lib": {
+      "root": "crates/evefrontier-lib",
+      "sourceRoot": "crates/evefrontier-lib/src",
+      "projectType": "library",
+      "targets": {
+        "build": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo build --package evefrontier-lib",
+            "cwd": "{workspaceRoot}/crates/evefrontier-lib",
+            "forwardAllArgs": false
+          }
+        },
+        "test": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo test --package evefrontier-lib",
+            "cwd": "{workspaceRoot}/crates/evefrontier-lib",
+            "forwardAllArgs": false
+          }
+        },
+        "lint": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo clippy --all-targets --workspace -- -D warnings",
+            "cwd": "{workspaceRoot}",
+            "forwardAllArgs": false
+          }
+        },
+        "format": {
+          "executor": "nx:run-commands",
+          "options": {
+            "command": "cargo fmt --all",
+            "cwd": "{workspaceRoot}",
+            "forwardAllArgs": false
+          }
+        }
+      }
+    }
+  }
 }

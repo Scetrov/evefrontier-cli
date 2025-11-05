@@ -3,9 +3,13 @@ use dirs::cache_dir;
 use indicatif::{ProgressBar, ProgressStyle};
 use reqwest::blocking::Client;
 use serde::Deserialize;
-use std::{fs, io::{Read, Write}, path::PathBuf};
-use zip::ZipArchive;
 use std::path::Path;
+use std::{
+    fs,
+    io::{Read, Write},
+    path::PathBuf,
+};
+use zip::ZipArchive;
 
 #[derive(Deserialize)]
 struct Release {
@@ -32,15 +36,15 @@ fn download_asset(client: &Client, url: &str, dest: &PathBuf) -> Result<()> {
         .error_for_status()
         .context("download request returned error")?;
 
-    let total_size = resp
-        .content_length()
-        .unwrap_or(0);
+    let total_size = resp.content_length().unwrap_or(0);
 
     let pb = ProgressBar::new(total_size);
     pb.set_style(
-        ProgressStyle::with_template("[{elapsed_precise}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta})")
-            .unwrap()
-            .progress_chars("=>-"),
+        ProgressStyle::with_template(
+            "[{elapsed_precise}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta})",
+        )
+        .unwrap()
+        .progress_chars("=>-"),
     );
 
     let mut file = fs::File::create(dest)

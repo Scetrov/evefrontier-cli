@@ -1,7 +1,15 @@
 {
   "npmScope": "evefrontier",
-  "tasksRunnerOptions": {},
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nx/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["format", "lint"]
+      }
+    }
+  },
   "affected": {
     "defaultBase": "main"
-  }
+  },
+  "nxCloudId": "690bd81df1c57728d70a0da4"
 }

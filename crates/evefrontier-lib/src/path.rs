@@ -20,13 +20,9 @@ pub fn optimal_route(graph: &StarGraph, start_idx: usize) -> Vec<usize> {
                 continue;
             }
 
-            if let Some((cost, path)) = astar(
-                graph,
-                current,
-                |n| n == target,
-                |_| 1.0_f32,
-                |_| 0.0_f32,
-            ) {
+            if let Some((cost, path)) =
+                astar(graph, current, |n| n == target, |_| 1.0_f32, |_| 0.0_f32)
+            {
                 match &best_path {
                     None => best_path = Some((cost, path)),
                     Some((best_cost, _)) if cost < *best_cost => {

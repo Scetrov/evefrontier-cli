@@ -20,13 +20,13 @@ enum Commands {
         force: bool,
     },
     /// Compute route starting at SYSTEM_NAME
-    Route {
-        start: String,
-    },
+    Route { start: String },
 }
 
 fn resolve_data_path(cli: Option<PathBuf>) -> PathBuf {
-    if let Some(p) = cli { return p; }
+    if let Some(p) = cli {
+        return p;
+    }
     if let Ok(env) = std::env::var("EVEFRONTIER_DATA_DIR") {
         return PathBuf::from(env);
     }
