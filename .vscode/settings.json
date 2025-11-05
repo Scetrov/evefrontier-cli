@@ -1,3 +1,12 @@
 {
-  "debug.node.autoAttach": "off"
+  "debug.node.autoAttach": "off",
+  "terminal.integrated.env.windows": {
+    "NODE_OPTIONS": ""
+  },
+  "terminal.integrated.env.osx": {
+    "NODE_OPTIONS": ""
+  },
+  "terminal.integrated.env.linux": {
+    "NODE_OPTIONS": ""
+  }
 }
