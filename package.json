@@ -12,6 +12,7 @@
   "scripts": {
     "format": "prettier --write '**/*.{md,rs,json,toml,mdx}'",
     "lint:md": "markdownlint --config .markdownlint.json --fix 'instructions/**/*.md'",
+    "precommit:nx": "nx affected --target=format --base=main --head=HEAD && nx affected --target=lint --base=main --head=HEAD",
     "prepare": "husky install",
     "postinstall": "husky install"
   },

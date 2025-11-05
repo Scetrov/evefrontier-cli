@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "Running pre-commit checks: formatting and markdown lint"
+pnpm run precommit:nx || true
+pnpm exec lint-staged || true
+pnpm exec markdownlint --config .markdownlint.yaml --fix "instructions/**/*.md" || true
+pnpm exec prettier --write "instructions/**/*.md" || true
