@@ -62,6 +62,7 @@ testing, call `ensure_c3e6_dataset(Some(path))` to control where the DB is place
   download. For production-grade behavior consider retries with exponential backoff and timeouts.
 - CLI ergonomics: add `--data-dir` and env var documentation, and consider adding a `--no-download`
   flag to `route` so users can run against an existing DB.
+- Any architecturally significant changes should be documented as ADRs under `docs/adrs/`, following
 
 ## Files to inspect when making changes
 
