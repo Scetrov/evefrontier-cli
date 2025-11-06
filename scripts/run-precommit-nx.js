@@ -50,9 +50,9 @@ const run = (args) => {
 run(['run', 'evefrontier-pathfinder:outdated']);
 run(['run-many', '--target=audit', '--all']);
 
-// Then run affected format and lint as before
-run(['affected', '--target=format', '--base=main', '--head=HEAD']);
-run(['affected', '--target=lint', '--base=main', '--head=HEAD']);
+// Then run affected fmt and clippy as defined in project.json
+run(['affected', '--target=fmt', '--base=main', '--head=HEAD']);
+run(['affected', '--target=clippy', '--base=main', '--head=HEAD']);
 
 if (failures.length > 0) {
   console.error("Precommit checks failed for the following commands:");
