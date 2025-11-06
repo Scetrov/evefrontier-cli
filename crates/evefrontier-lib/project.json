@@ -34,8 +34,9 @@
     },
     "audit": {
       "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/.cache/audit/evefrontier-lib.json"],
       "options": {
-        "command": "cargo audit",
+        "command": "node ./scripts/run-audit.js evefrontier-lib",
         "cwd": "{workspaceRoot}"
       }
     },

@@ -4,7 +4,7 @@
     "default": {
       "runner": "@nx/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["format", "lint"]
+        "cacheableOperations": ["format", "lint", "audit"]
       }
     }
   },
