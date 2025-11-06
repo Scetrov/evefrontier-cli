@@ -1,4 +1,3 @@
-echo "Running pre-commit checks: pnpm outdated + nx audit + format + lint"
 pnpm run precommit:nx
 pnpm exec lint-staged
 pnpm run lint:md
