@@ -1,0 +1,306 @@
+name: Release cross-compile
+
+on:
+    push:
+        tags:
+            - "v*"
+
+permissions:
+    contents: write
+    packages: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                target:
+                    - x86_64-unknown-linux-gnu
+                    - aarch64-unknown-linux-gnu
+                    - x86_64-unknown-linux-musl
+                    - aarch64-unknown-linux-musl
+                    - x86_64-pc-windows-gnu
+                    - riscv64gc-unknown-linux-gnu
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: "pnpm"
+
+            - name: Install pnpm and deps
+              run: |
+                  npm i -g pnpm@latest
+                  pnpm install --frozen-lockfile
+
+            - name: Install Rust toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+                  profile: minimal
+
+            - name: Cache cargo registry
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cargo/registry
+                      ~/.cargo/git
+                  key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+            - name: Add target
+              run: |
+                  rustup target add ${{ matrix.target }} || true
+
+            - name: Install cross (for linux/windows-gnu/musl/riscv targets)
+              if: startsWith(matrix.target, 'x86_64') || contains(matrix.target, 'linux') || contains(matrix.target, 'windows-gnu') || contains(matrix.target, 'riscv')
+              run: |
+                  cargo install cross || true
+
+            - name: Build for target
+              run: |
+                  set -e
+                  case "${{ matrix.target }}" in
+                    aarch64-apple-darwin|x86_64-apple-darwin)
+                      echo "macOS targets must be built on macOS or with osxcross; skipping on ubuntu runner"
+                      exit 0
+                      ;;
+                    x86_64-pc-windows-msvc)
+                      echo "MSVC builds must run on windows runner; skipping on ubuntu runner"
+                      exit 0
+                      ;;
+                    *)
+                      # Use cross when available; fall back to cargo
+                      if command -v cross >/dev/null 2>&1; then
+                        cross build --release --target ${{ matrix.target }}
+                      else
+                        cargo build --release --target ${{ matrix.target }}
+                      fi
+                      ;;
+                  esac
+            - name: Ensure zip is installed (for packaging)
+              if: runner.os == 'Linux'
+              run: |
+                  sudo apt-get update && sudo apt-get install -y zip
+
+            - name: Collect artifact
+              run: |
+                  set -e
+                  mkdir -p release-artifacts
+                  BIN_NAME="evefrontier-pathfinder"
+                  TARGET_DIR="target/${{ matrix.target }}/release"
+                  case "${{ matrix.target }}" in
+                    x86_64-unknown-linux-gnu)
+                      PLATFORM="linux-x86_64" ;;
+                    aarch64-unknown-linux-gnu)
+                      PLATFORM="linux-aarch64" ;;
+                    x86_64-unknown-linux-musl)
+                      PLATFORM="linux-x86_64-musl" ;;
+                    aarch64-unknown-linux-musl)
+                      PLATFORM="linux-aarch64-musl" ;;
+                    x86_64-pc-windows-gnu)
+                      PLATFORM="windows-x86_64-gnu" ;;
+                    x86_64-pc-windows-msvc)
+                      PLATFORM="windows-x86_64-msvc" ;;
+                    aarch64-apple-darwin)
+                      PLATFORM="macos-aarch64" ;;
+                    x86_64-apple-darwin)
+                      PLATFORM="macos-x86_64" ;;
+                    riscv64gc-unknown-linux-gnu)
+                      PLATFORM="linux-riscv64" ;;
+                    *)
+                      PLATFORM="${{ matrix.target }}" ;;
+                  esac
+
+                  # Only package when the binary exists for this target on this runner
+                  if [ -f "$TARGET_DIR/$BIN_NAME" ]; then
+                    case "$PLATFORM" in
+                      linux-*|macos-*)
+                        TAR_NAME=release-artifacts/evefrontier-pathfinder-${PLATFORM}.tar.gz
+                        tar -czf "$TAR_NAME" -C "$TARGET_DIR" "$BIN_NAME"
+                        # generate sha256 checksum
+                        if command -v sha256sum >/dev/null 2>&1; then
+                          sha256sum "$TAR_NAME" > "$TAR_NAME.sha256"
+                        else
+                          shasum -a 256 "$TAR_NAME" > "$TAR_NAME.sha256" || true
+                        fi
+                        ;;
+                      windows-*)
+                        # create zip containing the .exe
+                        if [ -f "$TARGET_DIR/${BIN_NAME}.exe" ]; then
+                          ZIP_NAME=release-artifacts/evefrontier-pathfinder-${PLATFORM}.zip
+                          zip -j "$ZIP_NAME" "$TARGET_DIR/${BIN_NAME}.exe"
+                          # generate sha256 checksum
+                          sha256sum "$ZIP_NAME" > "$ZIP_NAME.sha256" || true
+                        fi
+                        ;;
+                      *)
+                        cp "$TARGET_DIR/$BIN_NAME" release-artifacts/evefrontier-pathfinder-${PLATFORM}
+                        ;;
+                    esac
+                  elif [ -f "$TARGET_DIR/${BIN_NAME}.exe" ]; then
+                    # some targets produce .exe
+                    case "$PLATFORM" in
+                      windows-*)
+                        ZIP_NAME=release-artifacts/evefrontier-pathfinder-${PLATFORM}.zip
+                        zip -j "$ZIP_NAME" "$TARGET_DIR/${BIN_NAME}.exe"
+                        sha256sum "$ZIP_NAME" > "$ZIP_NAME.sha256" || true
+                        ;;
+                      *)
+                        cp "$TARGET_DIR/${BIN_NAME}.exe" release-artifacts/evefrontier-pathfinder-${PLATFORM}.exe
+                        # checksum for standalone exe
+                        sha256sum "release-artifacts/evefrontier-pathfinder-${PLATFORM}.exe" > "release-artifacts/evefrontier-pathfinder-${PLATFORM}.exe.sha256" || true
+                        ;;
+                    esac
+                  else
+                    echo "No built binary found for target ${matrix.target} on this runner; skipping packaging"
+                  fi
+
+            - name: Upload artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ matrix.target }}-artifact
+                  path: release-artifacts/**
+
+    macos:
+        runs-on: macos-latest
+        needs: [build]
+        if: startsWith(github.ref, 'refs/tags/v')
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Rust
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+                  profile: minimal
+
+            - name: Add macOS targets
+              run: |
+                  rustup target add aarch64-apple-darwin x86_64-apple-darwin || true
+
+            - name: Build aarch64-apple-darwin
+              run: |
+                  cargo build --release --target aarch64-apple-darwin || true
+
+            - name: Build x86_64-apple-darwin
+              run: |
+                  cargo build --release --target x86_64-apple-darwin || true
+
+            - name: Package macOS artifacts
+              run: |
+                  mkdir -p release-artifacts
+                  for t in aarch64-apple-darwin x86_64-apple-darwin; do
+                    BIN=target/$t/release/evefrontier-pathfinder
+                    if [ -f "$BIN" ]; then
+                    TAR=release-artifacts/evefrontier-pathfinder-$t.tar.gz
+                    tar -czf "$TAR" -C "$(dirname $BIN)" "$(basename $BIN)"
+                    if command -v sha256sum >/dev/null 2>&1; then
+                      sha256sum "$TAR" > "$TAR.sha256"
+                    else
+                      shasum -a 256 "$TAR" > "$TAR.sha256" || true
+                    fi
+                    fi
+                  done
+
+            - name: Upload macOS artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: macos-artifacts
+                  path: release-artifacts/**
+
+    windows:
+        runs-on: windows-latest
+        needs: [build]
+        if: startsWith(github.ref, 'refs/tags/v')
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Rust
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: stable
+                  profile: minimal
+
+            - name: Add windows targets
+              run: |
+                  rustup target add x86_64-pc-windows-msvc x86_64-pc-windows-gnu || true
+
+            - name: Build windows-msvc
+              run: |
+                  cargo build --release --target x86_64-pc-windows-msvc || true
+
+            - name: Package windows artifacts (PowerShell)
+              if: runner.os == 'Windows'
+              shell: "pwsh"
+              run: |
+                  New-Item -ItemType Directory -Path release-artifacts -Force | Out-Null
+                  $msvcPath = Join-Path -Path "target" -ChildPath "x86_64-pc-windows-msvc\release\evefrontier-pathfinder.exe"
+                  if (Test-Path $msvcPath) {
+                    $dst = "release-artifacts\evefrontier-pathfinder-windows-x86_64-msvc.zip"
+                    Compress-Archive -Path $msvcPath -DestinationPath $dst -Force
+                    $hash = Get-FileHash -Path $dst -Algorithm SHA256
+                    "$($hash.Hash)  $(Split-Path $dst -Leaf)" | Out-File -FilePath "$dst.sha256" -Encoding ascii
+                  }
+
+            - name: Upload windows artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: windows-artifacts
+                  path: release-artifacts/**
+
+    create-release:
+        needs: [build, macos, windows]
+        runs-on: ubuntu-latest
+        if: startsWith(github.ref, 'refs/tags/v')
+        steps:
+            - name: Download artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  path: downloaded-artifacts
+
+            - name: List downloaded artifacts
+              run: |
+                  echo "Downloaded artifact files:"
+                  ls -la downloaded-artifacts || true
+
+            - name: Create GitHub Release
+              id: create_release
+              uses: softprops/action-gh-release@v1
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  name: ${{ github.ref_name }}
+                  body: Release ${{ github.ref_name }}
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create combined SHA256SUMS
+              run: |
+                  mkdir -p published
+                  shopt -s globstar || true
+                  # If .sha256 files exist, concatenate them
+                  if compgen -G "downloaded-artifacts/**/*.sha256" > /dev/null; then
+                    cat downloaded-artifacts/**/*.sha256 | sed 's/  /  /' > published/SHA256SUMS
+                  else
+                    # compute checksums for archives
+                    for f in downloaded-artifacts/**/*.tar.gz downloaded-artifacts/**/*.zip; do
+                      if [ -f "$f" ]; then sha256sum "$f"; fi
+                    done > published/SHA256SUMS
+                  fi
+
+            - name: Upload release assets
+              uses: softprops/action-gh-release@v1
+              with:
+                  tag_name: ${{ github.ref_name }}
+                  name: ${{ github.ref_name }}
+                  files: |
+                      downloaded-artifacts/**/*.tar.gz
+                      downloaded-artifacts/**/*.zip
+                      downloaded-artifacts/**/*.sha256
+                      published/SHA256SUMS
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

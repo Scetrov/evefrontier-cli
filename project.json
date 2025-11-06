@@ -6,7 +6,7 @@
     "outdated": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node ./scripts/check-pnpm-outdated.js",
+        "command": "pnpm outdated --depth 0 --json",
         "cwd": "{workspaceRoot}"
       }
     }

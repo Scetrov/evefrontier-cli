@@ -54,9 +54,11 @@ jobs:
                   node-version: 20
                   cache: "pnpm"
 
-            - name: Install pnpm and dependencies
+            - name: Enable Corepack and install pnpm
               run: |
-                  npm i -g pnpm@latest
+                  corepack enable
+                  corepack prepare pnpm@latest --activate
+                  pnpm --version
                   pnpm install --frozen-lockfile
 
             - name: Nx build sanity check

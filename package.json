@@ -13,7 +13,8 @@
   "scripts": {
     "format": "prettier --write \"**/*.{md,json,mdx}\"",
     "lint:md": "markdownlint --config .markdownlint.json --fix \"**/*.md\"",
-    "precommit:nx": "pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx run evefrontier-pathfinder:outdated && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=audit --base=main --head=HEAD --parallel && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=fmt --base=main --head=HEAD && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=clippy --base=main --head=HEAD"
+    "precommit:nx": "pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx run evefrontier-pathfinder:outdated && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=audit --base=main --head=HEAD --parallel && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=fmt --base=main --head=HEAD && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=clippy --base=main --head=HEAD",
+    "outdated:report": "node ./scripts/outdated-report.js"
   },
   "lint-staged": {
     "**/*.{md,json,mdx}": [
