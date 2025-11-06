@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "cross-env": "10.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.6",
     "markdownlint-cli": "^0.45.0",
@@ -12,9 +13,7 @@
   "scripts": {
     "format": "prettier --write \"**/*.{md,rs,json,toml,mdx}\"",
     "lint:md": "markdownlint --config .markdownlint.json --fix \"instructions/**/*.md\"",
-    "precommit:nx": "node scripts/run-precommit-nx.js",
-    "prepare": "husky install",
-    "postinstall": "husky install"
+    "precommit:nx": "pnpm exec cross-env NODE_OPTIONS=--no-deprecation node ./scripts/check-pnpm-outdated.js && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx run-many --target=audit --all --parallel && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=format --base=main --head=HEAD && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=lint --base=main --head=HEAD"
   },
   "lint-staged": {
     "**/*.{md,rs,json,toml}": [

@@ -21,16 +21,42 @@ if (!nxIsConfigured()) {
   process.exit(0);
 }
 
-// Run nx affected format then lint
+// Run nx affected format then lint. Collect failures to report at the end.
+const failures = [];
 const run = (args) => {
-  const res = spawnSync('npx', ['nx', ...args], { stdio: 'inherit' });
-  if (res.error || res.status !== 0) {
-    process.exit(res.status || 1);
+  const cmd = `npx ${["nx", ...args].join(" ")}`;
+  console.log(new Date().toISOString(), `running: ${cmd}`);
+  // Clear NODE_OPTIONS for child processes to avoid inheriting --inspect flags
+  const env = Object.assign({}, process.env, { NODE_OPTIONS: "" });
+  // Use shell:true so 'npx' command resolution works on Windows (npx.cmd)
+  // Add a timeout (5 minutes) to avoid infinite hangs; capture errors.
+  const res = spawnSync(cmd, { stdio: "inherit", env, shell: true, timeout: 300000 });
+  const code = res && typeof res.status === "number" ? res.status : res && res.error ? 1 : 0;
+  if (code !== 0) {
+    const errMsg = res && res.error ? ` error=${res.error && res.error.message}` : "";
+    const sig = res && res.signal ? ` signal=${res.signal}` : "";
+    console.error(`${cmd} exited with code ${code}${errMsg}${sig}`);
+    failures.push({
+      cmd,
+      code,
+      err: res && res.error ? String(res.error) : undefined,
+      signal: res && res.signal
+    });
   }
+  return code;
 };
-// Run outdated checks across all projects (cargo audit for crates, pnpm outdated at root)
-run(['run-many', '--target=outdated', '--all']);
+
+// Run pnpm outdated check at root (node script) then run cargo audits across crates
+run(['run', 'evefrontier-pathfinder:outdated']);
+run(['run-many', '--target=audit', '--all']);
 
 // Then run affected format and lint as before
 run(['affected', '--target=format', '--base=main', '--head=HEAD']);
 run(['affected', '--target=lint', '--base=main', '--head=HEAD']);
+
+if (failures.length > 0) {
+  console.error("Precommit checks failed for the following commands:");
+  failures.forEach((f) => console.error(`  - ${f.cmd} (exit ${f.code})`));
+  process.exit(1);
+}
+process.exit(0);

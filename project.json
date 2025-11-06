@@ -1,0 +1,14 @@
+{
+  "name": "evefrontier-pathfinder",
+  "root": ".",
+  "projectType": "application",
+  "targets": {
+    "outdated": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node ./scripts/check-pnpm-outdated.js",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}

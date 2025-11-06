@@ -1,0 +1,98 @@
+[NX CLOUD] Verifying current cloud bundle
+[NX CLOUD] A local bundle currently exists:  {
+  version: '2511.05.5',
+  fullPath: 'C:\\source\\evefrontier-pathfinder\\.nx\\cache\\cloud\\2511.05.5'
+}
+[NX CLOUD] Last verification was within the past 30 minutes, will not verify this time
+[NX CLOUD] Done:  C:\source\evefrontier-pathfinder\.nx\cache\cloud\2511.05.5
+Was not able to require.resolve module nx/src/utils/app-root from the following paths: C:\source\evefrontier-pathfinder\node_modules\.pnpm\nx@22.0.2\node_modules\nx\node_modules,C:\source\evefrontier-pathfinder\node_modules\.pnpm\nx@22.0.2\node_modules,C:\source\evefrontier-pathfinder\node_modules\.pnpm\node_modules,C:\source\evefrontier-pathfinder\node_modules. This may be expected.
+Was not able to require.resolve module nx/src/utils/app-root from the following paths: C:\source\evefrontier-pathfinder\node_modules\.pnpm\nx@22.0.2\node_modules\nx\node_modules,C:\source\evefrontier-pathfinder\node_modules\.pnpm\nx@22.0.2\node_modules,C:\source\evefrontier-pathfinder\node_modules\.pnpm\node_modules,C:\source\evefrontier-pathfinder\node_modules. This may be expected.
+Was not able to require.resolve module nx/src/tasks-runner/process-metrics-service from the following paths: C:\source\evefrontier-pathfinder\node_modules\.pnpm\nx@22.0.2\node_modules\nx\node_modules,C:\source\evefrontier-pathfinder\node_modules\.pnpm\nx@22.0.2\node_modules,C:\source\evefrontier-pathfinder\node_modules\.pnpm\node_modules,C:\source\evefrontier-pathfinder\node_modules. This may be expected.
+[Nx Cloud Debug] Skipping foreground heartbeat since CI environment is not detected.
+
+ NX   Running target build for 2 projects:
+
+- evefrontier-cli
+- evefrontier-lib
+
+
+[NX CLOUD] Verifying current cloud bundle
+[NX CLOUD] A local bundle currently exists:  {
+  version: '2511.05.5',
+  fullPath: 'C:\\source\\evefrontier-pathfinder\\.nx\\cache\\cloud\\2511.05.5'
+}
+[NX CLOUD] Last verification was within the past 30 minutes, will not verify this time
+[NX CLOUD] Done:  C:\source\evefrontier-pathfinder\.nx\cache\cloud\2511.05.5
+(node:10928) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[Nx Cloud Debug] Attempting to acquire filesystem lock with path:  C:\Users\mcp\AppData\Local\Temp\client-instance-id.lock
+[Nx Cloud Debug] Failed to create folder lock at path: C:\Users\mcp\AppData\Local\Temp\client-instance-id.lock
+[Nx Cloud] Unable to detect a VCS context from the environment.
+
+ NX   RunStart
+
+
+{
+  "branch": null,
+  "runGroup": "565a46bb6753571af53aaa590b216f7b44aa098e",
+  "ciExecutionId": null,
+  "ciExecutionEnv": "",
+  "hashes": [
+    "1340777269371246308",
+    "9946290719183151841"
+  ],
+  "machineInfo": {
+    "machineId": "YffQWYr++XO/5RRX9Rdejg==",
+    "platform": "win32",
+    "version": "Windows 11 Pro",
+    "cpuCores": 16
+  },
+  "vcsContext": null,
+  "clientInstanceSource": "CLOUD_RUNNER",
+  "clientInstanceId": "e8707d16-0b99-4eee-9cad-6b9bb577c183"
+}
+
+RunStart duration: 192
+
+> nx run evefrontier-lib:build
+
+> cargo build --package evefrontier-lib
+
+warning: virtual workspace defaulting to `resolver = "1"` despite one or more workspace members being on edition 2021 which implies `resolver = "2"`
+note: to keep the current resolver, specify `workspace.resolver = "1"` in the workspace root's manifest
+note: to use the edition 2021 resolver, specify `workspace.resolver = "2"` in the workspace root's manifest
+note: for more details see https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.82s
+
+> nx run evefrontier-cli:build
+
+> cargo build --package evefrontier-cli
+
+warning: virtual workspace defaulting to `resolver = "1"` despite one or more workspace members being on edition 2021 which implies `resolver = "2"`
+note: to keep the current resolver, specify `workspace.resolver = "1"` in the workspace root's manifest
+note: to use the edition 2021 resolver, specify `workspace.resolver = "2"` in the workspace root's manifest
+note: for more details see https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on build directory
+   Compiling evefrontier-lib v0.1.0 (C:\source\evefrontier-pathfinder\crates\evefrontier-lib)
+   Compiling evefrontier-cli v0.1.0 (C:\source\evefrontier-pathfinder\crates\evefrontier-cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.64s
+
+
+
+ NX   Successfully ran target build for 2 projects
+
+
+
+ NX   Storing terminal outputs for evefrontier-lib:build with hash 9946290719183151841
+
+
+ NX   Storing terminal outputs for evefrontier-cli:build with hash 1340777269371246308
+
+View logs and investigate cache misses at https://nx.app/runs/R65j1ID36n
+

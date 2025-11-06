@@ -14,6 +14,9 @@ If you are an AI coding agent making changes, prefer modifying and testing code 
 `crates/evefrontier-lib` and `crates/evefrontier-cli` rather than editing the original single-file
 binary in `src/`.
 
+> [!IMPORTANT] This repository is predominantly rust code, and uses NX to manage the workspace, see
+> https://nx.dev/docs/guides/nx-release/publish-rust-crates for further information.
+
 ## Build & test workflows
 
 - Build entire workspace: `cargo build --workspace` or
