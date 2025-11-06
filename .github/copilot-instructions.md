@@ -17,6 +17,28 @@ binary in `src/`.
 > [!IMPORTANT] This repository is predominantly rust code, and uses NX to manage the workspace, see
 > https://nx.dev/docs/guides/nx-release/publish-rust-crates for further information.
 
+## Overview of development loop
+
+Ensure that you follow a Boyd Loop style of development:
+
+1. **Observe**: Read the relevant documentation files in `docs/` (especially ADRs) to understand the
+   architecture and design decisions, combine this within this document and any other instructions
+   provided in chat.
+2. **Orient**: Familiarize yourself with the code structure in `crates/evefrontier-lib` and
+   `crates/evefrontier-cli`. Identify which parts of the codebase are relevant to the task at hand.
+   Use available MCP servers to gather additional information.
+3. **Decide**: Plan your changes carefully, considering how they fit within the existing
+   architecture and design principles outlined in the ADRs, ensure that the decision is focused with
+   the minimal changes required to achieve the goal. Document any key decisions as ADRs.
+4. **Act**: Implement the changes in small, incremental steps. After each change, run tests and
+   build the project to ensure that everything works as expected, continue to iterate through the
+   Boyd Loop as necessary until all tasks on the todo list are complete.
+
+> [!NOTE] If the context window does not contain sufficient information to complete your task, you
+> may request additional information about specific files or areas of the codebase; if the context
+> window is too small to contain the entire file, you may reduce the scope of a task while
+> iterating.
+
 ## Build & test workflows
 
 - Build entire workspace: `cargo build --workspace` or
