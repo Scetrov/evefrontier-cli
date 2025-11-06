@@ -11,12 +11,12 @@
     "prettier": "^3.6.2"
   },
   "scripts": {
-    "format": "prettier --write \"**/*.{md,rs,json,toml,mdx}\"",
-    "lint:md": "markdownlint --config .markdownlint.json --fix \"instructions/**/*.md\"",
+    "format": "prettier --write \"**/*.{md,json,mdx}\"",
+    "lint:md": "markdownlint --config .markdownlint.json --fix \"**/*.md\"",
     "precommit:nx": "pnpm exec cross-env NODE_OPTIONS=--no-deprecation node ./scripts/check-pnpm-outdated.js && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx run-many --target=audit --all --parallel && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=format --base=main --head=HEAD && pnpm exec cross-env NODE_OPTIONS=--no-deprecation nx affected --target=lint --base=main --head=HEAD"
   },
   "lint-staged": {
-    "**/*.{md,rs,json,toml}": [
+    "**/*.{md,json,mdx}": [
       "prettier --write"
     ]
   }
